@@ -15,32 +15,38 @@ const renderSummary = (summary) => {
     .join('');
 };
 
-const drawChart = (canvasId, label, labels, data, color) => {
-  const ctx = document.getElementById(canvasId);
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label,
-          data,
-          borderColor: color,
-          backgroundColor: `${color}33`,
-          tension: 0.3,
-          fill: true,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { color: '#d4ddff' } },
-        y: { ticks: { color: '#d4ddff' } },
-      },
-    },
+const metricConfigs = [
+  { key: 'steps', label: 'Pasos por día', color: '#63e6be', format: (v) => formatNumber(v) },
+  { key: 'avg_heart_rate', label: 'Frecuencia cardíaca promedio', color: '#ff8787', format: (v) => `${v} bpm` },
+  { key: 'sleep_hours', label: 'Horas de sueño por día', color: '#74c0fc', format: (v) => `${v} h` },
+];
+
+const renderBars = (daily) => {
+  const container = document.getElementById('charts-container');
+
+  const sections = metricConfigs.map((metric) => {
+    const maxValue = Math.max(...daily.map((d) => Number(d[metric.key] || 0)), 1);
+
+    const rows = daily
+      .map((d) => {
+        const value = Number(d[metric.key] || 0);
+        const width = Math.max(2, Math.round((value / maxValue) * 100));
+        return `
+          <div class="bar-row">
+            <span class="bar-label">${d.date}</span>
+            <div class="bar-track">
+              <div class="bar-fill" style="--w:${width}%; --c:${metric.color}"></div>
+            </div>
+            <span class="bar-value">${metric.format(value)}</span>
+          </div>
+        `;
+      })
+      .join('');
+
+    return `<article class="chart-card"><h2>${metric.label}</h2>${rows}</article>`;
   });
+
+  container.innerHTML = sections.join('');
 };
 
 const init = async () => {
@@ -49,17 +55,19 @@ const init = async () => {
     fetch('/api/daily'),
   ]);
 
+  if (!summaryRes.ok || !dailyRes.ok) {
+    throw new Error('Error consultando la API');
+  }
+
   const summary = await summaryRes.json();
   const daily = await dailyRes.json();
 
   renderSummary(summary);
-
-  const labels = daily.map((d) => d.date);
-  drawChart('stepsChart', 'Pasos', labels, daily.map((d) => d.steps), '#63e6be');
-  drawChart('heartRateChart', 'BPM', labels, daily.map((d) => d.avg_heart_rate), '#ff8787');
-  drawChart('sleepChart', 'Horas de sueño', labels, daily.map((d) => d.sleep_hours), '#74c0fc');
+  renderBars(daily);
 };
 
 init().catch((error) => {
   console.error('No se pudo cargar el dashboard', error);
+  document.getElementById('charts-container').innerHTML =
+    '<article class="chart-card"><h2>Error</h2><p>No se pudo cargar la vista previa. Revisa que el servidor esté activo.</p></article>';
 });

@@ -20,27 +20,33 @@ Columnas esperadas:
 - `calories`
 - `sleep_minutes`
 
-## 2) Ejecutar en local
+## 2) Ejecutar vista previa (sin dependencias externas)
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --host 0.0.0.0 --port 8000
+python server.py
 ```
 
 Abre: `http://localhost:8000`
 
-## 3) Publicar online rápido
+> Esta opción usa solo librerías estándar de Python, por lo que funciona incluso en entornos sin acceso a internet.
+
+## 3) Ejecutar tests
+
+```bash
+python -m pip install -r requirements.txt
+python -m pytest -q
+```
+
+## 4) Publicar online rápido
 
 Puedes desplegar en Render/Railway/Fly.io usando este mismo repo.
 
 Ejemplo con Render:
 
 - Build command: `pip install -r requirements.txt`
-- Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+- Start command: `python server.py`
 
-## 4) Endpoints API
+## 5) Endpoints API
 
 - `GET /api/summary`
 - `GET /api/daily`
