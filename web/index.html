@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Xiaomi Smart Band 10</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>Dashboard Xiaomi Smart Band 10</h1>
+      <p>Visualiza pasos, frecuencia cardíaca, calorías y sueño.</p>
+    </header>
+
+    <main>
+      <section class="cards" id="summary-cards"></section>
+
+      <section class="charts">
+        <article class="chart-card">
+          <h2>Pasos por día</h2>
+          <canvas id="stepsChart"></canvas>
+        </article>
+        <article class="chart-card">
+          <h2>Frecuencia cardíaca promedio</h2>
+          <canvas id="heartRateChart"></canvas>
+        </article>
+        <article class="chart-card">
+          <h2>Horas de sueño por día</h2>
+          <canvas id="sleepChart"></canvas>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <p>Tip: usa Gadgetbridge para exportar los datos de tu Smart Band y reemplaza el CSV de ejemplo.</p>
+    </footer>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
