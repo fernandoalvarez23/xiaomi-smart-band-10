@@ -4,8 +4,15 @@ interface Props {
   error: string | null;
 }
 
+function isIOS(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
 export function ConnectScreen({ onConnect, connecting, error }: Props) {
   const supported = typeof navigator !== 'undefined' && 'bluetooth' in navigator;
+  const isiOS = isIOS();
 
   return (
     <div className="connect-screen">
@@ -27,9 +34,19 @@ export function ConnectScreen({ onConnect, connecting, error }: Props) {
         <h1>Xiaomi Smart Band 10</h1>
         <p className="subtitle">Connect via Bluetooth to monitor your health data</p>
 
-        {!supported && (
+        {!supported && isiOS && (
+          <div className="compat-notice ios-notice">
+            <p className="compat-title">iPhone / iPad detected</p>
+            <p>Safari and Chrome on iOS do not support Web Bluetooth.
+              To connect your band from this device, use the
+              {' '}<a href="https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055" target="_blank" rel="noopener noreferrer">Bluefy</a> browser
+              (free on the App Store). It is the only iOS browser that supports Web Bluetooth.</p>
+          </div>
+        )}
+
+        {!supported && !isiOS && (
           <p className="error">
-            Web Bluetooth is not supported. Use Chrome / Edge on Android, macOS, or Windows.
+            Web Bluetooth is not supported in this browser. Use Chrome or Edge on Android, macOS, or Windows.
           </p>
         )}
 
@@ -42,6 +59,12 @@ export function ConnectScreen({ onConnect, connecting, error }: Props) {
         >
           {connecting ? 'Connecting…' : 'Connect Band'}
         </button>
+
+        {supported && (
+          <p className="compat-hint">
+            Ensure Bluetooth is enabled and your band is nearby
+          </p>
+        )}
       </div>
     </div>
   );
