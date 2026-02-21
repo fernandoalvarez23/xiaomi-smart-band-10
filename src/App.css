@@ -83,6 +83,29 @@
   background: rgba(255, 105, 0, 0.08);
 }
 
+.compat-notice.error-notice {
+  border-color: var(--red);
+  background: rgba(255, 77, 106, 0.08);
+}
+
+.compat-notice.error-notice .compat-title {
+  color: var(--red);
+}
+
+.troubleshoot-list {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  list-style: disc;
+}
+
+.troubleshoot-list li {
+  margin-bottom: 6px;
+}
+
+.troubleshoot-list li:last-child {
+  margin-bottom: 0;
+}
+
 .compat-notice .compat-title {
   font-weight: 700;
   font-size: 0.9rem;

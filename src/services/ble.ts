@@ -89,7 +89,14 @@ class BLEService {
       this.handleDisconnect();
     });
 
-    this.server = await this.device.gatt!.connect();
+    try {
+      this.server = await this.device.gatt!.connect();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new Error(
+        'CONNECTION_FAILED:' + msg,
+      );
+    }
     this.data.deviceName = this.device.name ?? 'Smart Band 10';
     this.data.connected = true;
     this.emit();

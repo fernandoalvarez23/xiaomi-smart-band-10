@@ -50,17 +50,35 @@ export function ConnectScreen({ onConnect, connecting, error }: Props) {
           </p>
         )}
 
-        {error && <p className="error">{error}</p>}
+        {error && (
+          <div className="compat-notice error-notice">
+            <p className="compat-title">Connection failed</p>
+            {error.includes('CONNECTION_FAILED') ? (
+              <>
+                <p>Could not establish a connection to the band. This usually happens when:</p>
+                <ul className="troubleshoot-list">
+                  <li><strong>Mi Fitness app is connected</strong> — BLE only allows one connection at a time. Close or force-stop the Mi Fitness / Zepp Life app, then try again.</li>
+                  <li><strong>Band is out of range</strong> — Keep the band close to your device.</li>
+                  <li><strong>Bluetooth is off</strong> — Check that Bluetooth is enabled in Settings.</li>
+                </ul>
+              </>
+            ) : error.includes('User cancelled') || error.includes('chooser') ? (
+              <p>Pairing was cancelled. Tap "Connect Band" to try again.</p>
+            ) : (
+              <p>{error}</p>
+            )}
+          </div>
+        )}
 
         <button
           className="btn-connect"
           onClick={onConnect}
           disabled={connecting || !supported}
         >
-          {connecting ? 'Connecting…' : 'Connect Band'}
+          {connecting ? 'Connecting…' : error ? 'Retry Connection' : 'Connect Band'}
         </button>
 
-        {supported && (
+        {supported && !error && (
           <p className="compat-hint">
             Ensure Bluetooth is enabled and your band is nearby
           </p>
